@@ -1,0 +1,45 @@
+services:
+  db:
+    image: postgres:15
+    container_name: travian_db
+    restart: always
+    environment:
+      POSTGRES_USER: travian_user
+      POSTGRES_PASSWORD: travian_password
+      POSTGRES_DB: travian_db
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    ports:
+      - "5432:5432"
+
+  app:
+    build:
+      context: .
+    container_name: travian_app
+    depends_on:
+      - db
+    environment:
+      DATABASE_URL: postgresql+psycopg2://travian_user:travian_password@db:5432/travian_db
+      TRAVIAN_SERVER_URL: https://cw.x5.international.travian.com
+    volumes:
+      - .:/app
+    command: poetry run uvicorn app.main:app --host 0.0.0.0 --port 8000
+    ports:
+      - "8000:8000"
+
+  scheduler:
+    build:
+      context: .
+    container_name: travian_scheduler
+    restart: always
+    environment:
+      DATABASE_URL: postgresql+psycopg2://travian_user:travian_password@db:5432/travian_db
+    volumes:
+      - .:/app
+    command: poetry run python scripts/scheduler.py
+    depends_on:
+      - db
+
+
+volumes:
+  postgres_data:

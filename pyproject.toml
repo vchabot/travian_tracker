@@ -1,0 +1,28 @@
+[tool.poetry]
+name = "travian-tracker"
+version = "0.1.0"
+description = "Get information about players, alliances and villages on a specific server"
+authors = ["Vincent Chabot <vince.chabot@gmail.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+fastapi = "^0.115"
+sqlalchemy = "^2.0"
+psycopg2-binary = "^2.9"
+alembic = "^1.11"
+uvicorn = "^0.34.0"
+asyncpg = "^0.30.0"
+pydantic-settings = "^2.7.0"
+requests = "^2.32.3"
+apscheduler = "^3.11.0"
+structlog = "^24.4.0"
+
+[tool.poetry.group.dev.dependencies]
+pytest = "^8.3.4"
+black = "^23.9"
+isort = "^5.12"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
