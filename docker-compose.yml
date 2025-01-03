@@ -19,7 +19,7 @@ services:
     depends_on:
       - db
     environment:
-      DATABASE_URL: postgresql+psycopg2://travian_user:travian_password@db:5432/travian_db
+      DATABASE_URL: postgresql+asyncpg://travian_user:travian_password@db:5432/travian_db
       TRAVIAN_SERVER_URL: https://cw.x5.international.travian.com
     volumes:
       - .:/app
@@ -33,7 +33,7 @@ services:
     container_name: travian_scheduler
     restart: always
     environment:
-      DATABASE_URL: postgresql+psycopg2://travian_user:travian_password@db:5432/travian_db
+      DATABASE_URL: postgresql+asyncpg://travian_user:travian_password@db:5432/travian_db
     volumes:
       - .:/app
     command: poetry run python scripts/scheduler.py

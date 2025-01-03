@@ -2,13 +2,13 @@ from apscheduler.schedulers.blocking import BlockingScheduler
 from scripts.download_and_ingest import download_file, ingest_file
 from scripts.process_raw_imports import process_raw_imports
 
-def run_pipeline():
+async def run_pipeline():
     print("Beginning pipeline.")
-    download_file()
+    await download_file()
     print("File downloaded.")
-    ingest_file()
+    await ingest_file()
     print("Raw data ingested.")
-    process_raw_imports()
+    await process_raw_imports()
     print("Data processed.")
 
 if __name__ == "__main__":

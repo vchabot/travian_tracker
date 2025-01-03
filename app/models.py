@@ -48,6 +48,18 @@ class Alliance(Base):
 class Village(Base):
     __tablename__ = "villages"
 
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "x": self.x,
+            "y": self.y,
+            "village_name": self.village_name,
+            "tribe": self.tribe,
+            "player_id": self.player_id,
+            "population": self.population,
+        }
+
     id = Column(Integer, primary_key=True, index=True)
     travian_village_id = Column(Integer, index=True)
     village_name = Column(String, nullable=False)
