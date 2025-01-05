@@ -8,6 +8,7 @@ async def create_raw_import(db: AsyncSession, line: str):
     keys = RawImport.__table__.columns.keys()
     del keys[keys.index('id')]
     del keys[keys.index('processed')]
+    del keys[keys.index('import_date')]
 
     # Replace the table name and columns
     table_and_fields_name = f"{RawImport.__table__.name} ({', '.join(keys)})"

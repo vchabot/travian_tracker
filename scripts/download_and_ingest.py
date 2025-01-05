@@ -7,7 +7,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import Session
 
 from app.config import settings
-from app.database import get_session, AsyncSessionLocal
+from app.database import AsyncSessionLocal
 from app.crud import create_raw_import
 
 from scripts.process_raw_imports import process_raw_imports

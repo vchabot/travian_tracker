@@ -6,18 +6,25 @@ from app.models import RawImport, Player, Alliance, Village, DailyChange
 from datetime import datetime
 
 async def process_raw_imports():
+    print("*" * 80)
+    print("Processing raw imports")
+    print("*" * 80)
     async for db in get_session():
 
         # Get all raw data
         result = await db.execute(select(RawImport).filter(RawImport.processed == False))
         raw_data = result.scalars().all()
 
+        print(len(raw_data))
+        print("Processing raw data")
+        print("*" * 80)
+
         for raw in raw_data:
             raw.alliance_id = None if raw.alliance_id == 0 else raw.alliance_id
 
             # Check and insert alliance
             if raw.alliance_id:
-                alliance = (await db.execute(select(Alliance).filter(Alliance.travian_alliance_id == raw.alliance_id))).first()
+                alliance = (await db.execute(select(Alliance).filter(Alliance.travian_alliance_id == raw.alliance_id))).scalars().first()
                 if not alliance:
                     alliance = Alliance(travian_alliance_id=raw.alliance_id, alliance_tag=raw.alliance_tag)
                     db.add(alliance)

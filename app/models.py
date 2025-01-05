@@ -1,5 +1,5 @@
 from sqlalchemy import Column, Integer, String, Boolean, Float, DateTime, ForeignKey
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, Mapped, mapped_column
 from sqlalchemy.sql import func
 from app.database import Base
 
@@ -18,12 +18,13 @@ class RawImport(Base):
     alliance_id = Column(Integer, nullable=True)
     alliance_tag = Column(String, nullable=True)
     population = Column(Integer, nullable=False)
-    capital = Column(Boolean, default=False)
+    region = Column(String, nullable=True)
+    capital = Column(Boolean, default=False, nullable=False)
     city = Column(String, nullable=True)
     harbor = Column(Boolean, nullable=True)
     victory_points = Column(Integer, nullable=True)
-    import_date = Column(DateTime, server_default=func.now())
-    processed = Column(Boolean, default=False)
+    import_date = Column(DateTime, server_default=func.now(), nullable=False)
+    processed: Mapped[bool] = mapped_column(Boolean, server_default="FALSE", nullable=False)
 
 class Player(Base):
     __tablename__ = "players"
