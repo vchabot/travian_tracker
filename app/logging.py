@@ -38,7 +38,7 @@ structlog.configure(
             }
         ),
         # Render the final event dict as JSON.
-        structlog.processors.JSONRenderer()
+        structlog.processors.JSONRenderer(),
     ],
     # `wrapper_class` is the bound logger that you get back from
     # get_logger(). This one imitates the API of `logging.Logger`.

@@ -1,7 +1,8 @@
-from sqlalchemy import Column, Integer, String, Boolean, Float, DateTime, ForeignKey
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, ForeignKey
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from sqlalchemy.sql import func
 from app.database import Base
+
 
 class RawImport(Base):
     __tablename__ = "raw_imports"
@@ -24,7 +25,10 @@ class RawImport(Base):
     harbor = Column(Boolean, nullable=True)
     victory_points = Column(Integer, nullable=True)
     import_date = Column(DateTime, server_default=func.now(), nullable=False)
-    processed: Mapped[bool] = mapped_column(Boolean, server_default="FALSE", nullable=False)
+    processed: Mapped[bool] = mapped_column(
+        Boolean, server_default="FALSE", nullable=False
+    )
+
 
 class Player(Base):
     __tablename__ = "players"
@@ -38,6 +42,7 @@ class Player(Base):
     history = relationship("DailyChange", back_populates="player")
     alliance = relationship("Alliance", back_populates="players")
 
+
 class Alliance(Base):
     __tablename__ = "alliances"
 
@@ -46,9 +51,9 @@ class Alliance(Base):
     alliance_tag = Column(String, nullable=True, index=True)
     players = relationship("Player", back_populates="alliance")
 
+
 class Village(Base):
     __tablename__ = "villages"
-
 
     def to_dict(self):
         return {
@@ -75,6 +80,7 @@ class Village(Base):
 
     player = relationship("Player", back_populates="villages")
     history = relationship("DailyChange", back_populates="village")
+
 
 class DailyChange(Base):
     __tablename__ = "daily_changes"

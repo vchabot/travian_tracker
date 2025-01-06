@@ -5,14 +5,16 @@ from app.database import get_session
 from app.models import RawImport, Player, Alliance, Village, DailyChange
 from datetime import datetime
 
+
 async def process_raw_imports():
     print("*" * 80)
     print("Processing raw imports")
     print("*" * 80)
     async for db in get_session():
-
         # Get all raw data
-        result = await db.execute(select(RawImport).filter(RawImport.processed == False))
+        result = await db.execute(
+            select(RawImport).filter(RawImport.processed.is_(False))
+        )
         raw_data = result.scalars().all()
 
         print(len(raw_data))
@@ -24,19 +26,40 @@ async def process_raw_imports():
 
             # Check and insert alliance
             if raw.alliance_id:
-                alliance = (await db.execute(select(Alliance).filter(Alliance.travian_alliance_id == raw.alliance_id))).scalars().first()
+                alliance = (
+                    (
+                        await db.execute(
+                            select(Alliance).filter(
+                                Alliance.travian_alliance_id == raw.alliance_id
+                            )
+                        )
+                    )
+                    .scalars()
+                    .first()
+                )
                 if not alliance:
-                    alliance = Alliance(travian_alliance_id=raw.alliance_id, alliance_tag=raw.alliance_tag)
+                    alliance = Alliance(
+                        travian_alliance_id=raw.alliance_id,
+                        alliance_tag=raw.alliance_tag,
+                    )
                     db.add(alliance)
                     await db.commit()
 
             # Check and insert player
-            player = (await db.execute(select(Player).filter(Player.travian_player_id == raw.player_id))).scalars().first()
+            player = (
+                (
+                    await db.execute(
+                        select(Player).filter(Player.travian_player_id == raw.player_id)
+                    )
+                )
+                .scalars()
+                .first()
+            )
             if not player:
                 player = Player(
                     travian_player_id=raw.player_id,
                     player_name=raw.player_name,
-                    alliance_id=alliance.id if alliance else None
+                    alliance_id=alliance.id if alliance else None,
                 )
                 db.add(player)
                 await db.commit()
@@ -44,7 +67,17 @@ async def process_raw_imports():
                 alliance = None
 
             # Check and insert village
-            village = (await db.execute(select(Village).filter(Village.travian_village_id == raw.village_id))).scalars().first()
+            village = (
+                (
+                    await db.execute(
+                        select(Village).filter(
+                            Village.travian_village_id == raw.village_id
+                        )
+                    )
+                )
+                .scalars()
+                .first()
+            )
             if not village:
                 village = Village(
                     travian_village_id=raw.village_id,
@@ -61,7 +94,10 @@ async def process_raw_imports():
                 db.add(village)
             else:
                 # Update village if population has changed
-                if village.population != raw.population or player.travian_player_id != raw.player_id:
+                if (
+                    village.population != raw.population
+                    or player.travian_player_id != raw.player_id
+                ):
                     population_delta = raw.population - village.population
                     db.add(
                         DailyChange(
@@ -80,6 +116,7 @@ async def process_raw_imports():
 
         await db.commit()
         await db.close()
+
 
 if __name__ == "__main__":
     asyncio.run(process_raw_imports())
