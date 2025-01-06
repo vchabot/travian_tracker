@@ -6,7 +6,7 @@ from app.database import Base
 class RawImport(Base):
     __tablename__ = "raw_imports"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     field_id = Column(Integer, nullable=False)
     x = Column(Integer, nullable=False)
     y = Column(Integer, nullable=False)
@@ -29,7 +29,7 @@ class RawImport(Base):
 class Player(Base):
     __tablename__ = "players"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     travian_player_id = Column(Integer, index=True)
     player_name = Column(String, nullable=False, index=True)
     alliance_id = Column(Integer, ForeignKey("alliances.id"), nullable=True)
@@ -41,7 +41,7 @@ class Player(Base):
 class Alliance(Base):
     __tablename__ = "alliances"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     travian_alliance_id = Column(Integer, index=True)
     alliance_tag = Column(String, nullable=True, index=True)
     players = relationship("Player", back_populates="alliance")
@@ -61,7 +61,7 @@ class Village(Base):
             "population": self.population,
         }
 
-    id = Column(Integer, primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     travian_village_id = Column(Integer, index=True)
     village_name = Column(String, nullable=False)
     x = Column(Integer, nullable=False)
@@ -79,7 +79,7 @@ class Village(Base):
 class DailyChange(Base):
     __tablename__ = "daily_changes"
 
-    id = Column(Integer, primary_key=True, index=True)
+    id: Mapped[int] = mapped_column(primary_key=True)
     village_id = Column(Integer, ForeignKey("villages.id"), nullable=False)
     player_id = Column(Integer, ForeignKey("players.id"), nullable=False)
     date = Column(DateTime, nullable=False, index=True)

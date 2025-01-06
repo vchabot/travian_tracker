@@ -43,7 +43,7 @@ async def get_neighbors(session: AsyncSession, x: int, y: int, radius: int, map_
 
     rounded_distance = func.round(distance.cast(Numeric), 1).cast(Float)
 
-    # Filter the neighbours
+    # Filter the neighbors
     query = await session.execute(
     select(
         Village,

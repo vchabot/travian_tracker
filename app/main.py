@@ -34,7 +34,7 @@ async def test_scheduler_ingest_raw():
 async def find_my_neighbors(x: int, y: int, radius: int = 10, session: AsyncSession = Depends(get_session)):
     print("Neighbors of ({}, {})".format(x, y))
     neighbors = await get_neighbors(session, x, y, radius, settings.map_size)
-    print(f"{len(neighbors)} neighbours found")
+    print(f"{len(neighbors)} neighbors found")
 
     return serialize_neighbors(neighbors)
 

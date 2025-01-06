@@ -6,7 +6,7 @@ Travian Tracker is a project helping you to get every tools you can find online,
 ## 🧐 Features    
 - Get data from your Travian server every night
 - Compute data to give you fresh data from your Travian server
-- Find my neighbour (not yet implemented)
+- Find my neighbors
 - Inactive player (not yet implemented)
 - Offensive operation creator (not yet implemented)
  
