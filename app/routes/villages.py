@@ -38,6 +38,7 @@ def serialize_neighbors(neighbors):
         {
             **neighbor[0].to_dict(),  # Convert Village to dict
             "distance": neighbor[1],  # Add distance
+            "population_delta": neighbor[2],  # Add population delta
         }
         for neighbor in neighbors
     ]

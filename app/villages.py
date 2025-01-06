@@ -1,7 +1,9 @@
+from datetime import date, timedelta
+
 from sqlalchemy import func, case, select, Numeric, Float
 from sqlalchemy.ext.asyncio import AsyncSession
 
-from app.models import Village
+from app.models import Village, DailyChange
 
 
 async def get_by_id(session: AsyncSession, village_id: int):
@@ -24,6 +26,10 @@ async def get_neighbors(
     # Define the total size of the map
     total_size = 2 * map_size + 1
 
+    # Dates for the last two days
+    today = date.today()
+    two_days_ago = today - timedelta(days=2)
+
     # subquery to calculate delta in x and y
     delta_x = case(
         (func.abs(Village.x - x) > map_size, func.abs(Village.x - x) - total_size),
@@ -39,9 +45,29 @@ async def get_neighbors(
 
     rounded_distance = func.round(distance.cast(Numeric), 1).cast(Float)
 
+    # Subquery for population change
+    population_delta_subquery = (
+        select(
+            DailyChange.village_id,
+            func.sum(DailyChange.population_delta).label("population_delta"),
+        )
+        .where(DailyChange.date >= two_days_ago)
+        .group_by(DailyChange.village_id)
+        .subquery()
+    )
+
     # Filter the neighbors
     query = await session.execute(
-        select(Village, rounded_distance.label("distance"))
+        select(
+            Village,
+            rounded_distance.label("distance"),
+            population_delta_subquery.c.population_delta,
+        )
+        .join(
+            population_delta_subquery,
+            population_delta_subquery.c.village_id == Village.id,
+            isouter=True,
+        )
         .group_by(
             Village.id,
             Village.x,
@@ -53,6 +79,7 @@ async def get_neighbors(
             Village.capital,
             Village.city,
             Village.harbor,
+            population_delta_subquery.c.population_delta,
         )
         .having(distance <= radius, distance != 0)
         .offset(offset)
