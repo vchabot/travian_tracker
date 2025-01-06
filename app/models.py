@@ -33,14 +33,22 @@ class RawImport(Base):
 class Player(Base):
     __tablename__ = "players"
 
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "travian_player_id": self.travian_player_id,
+            "player_name": self.player_name,
+            "alliance_id": self.alliance_id,
+        }
+
     id: Mapped[int] = mapped_column(primary_key=True)
     travian_player_id = Column(Integer, index=True)
     player_name = Column(String, nullable=False, index=True)
     alliance_id = Column(Integer, ForeignKey("alliances.id"), nullable=True)
 
-    villages = relationship("Village", back_populates="player")
-    history = relationship("DailyChange", back_populates="player")
-    alliance = relationship("Alliance", back_populates="players")
+    villages = relationship("Village", back_populates="player", lazy="select")
+    history = relationship("DailyChange", back_populates="player", lazy="select")
+    alliance = relationship("Alliance", back_populates="players", lazy="select")
 
 
 class Alliance(Base):
@@ -49,7 +57,7 @@ class Alliance(Base):
     id: Mapped[int] = mapped_column(primary_key=True)
     travian_alliance_id = Column(Integer, index=True)
     alliance_tag = Column(String, nullable=True, index=True)
-    players = relationship("Player", back_populates="alliance")
+    players = relationship("Player", back_populates="alliance", lazy="select")
 
 
 class Village(Base):
@@ -78,8 +86,8 @@ class Village(Base):
     harbor = Column(Boolean, nullable=True)
     player_id = Column(Integer, ForeignKey("players.id"), nullable=False)
 
-    player = relationship("Player", back_populates="villages")
-    history = relationship("DailyChange", back_populates="village")
+    player = relationship("Player", back_populates="villages", lazy="select")
+    history = relationship("DailyChange", back_populates="village", lazy="select")
 
 
 class DailyChange(Base):

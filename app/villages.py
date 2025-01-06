@@ -4,13 +4,18 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models import Village
 
 
+async def get_by_id(session: AsyncSession, village_id: int):
+    result = await session.execute(select(Village).filter(Village.id == village_id))
+    return result.scalars().first()
+
+
 async def get_neighbors(
     session: AsyncSession,
     x: int,
     y: int,
     radius: int,
     map_size: int,
-    offset: int,
+    offset: int = 0,
     limit: int = 100,
 ):
     """
@@ -56,3 +61,34 @@ async def get_neighbors(
     )
 
     return query.all()
+
+
+async def get_by_player(
+    session: AsyncSession, player_id: int, offset: int = 0, limit: int = 100
+):
+    result = await session.execute(
+        select(Village)
+        .filter(Village.player_id == player_id)
+        .offset(offset)
+        .limit(limit)
+        .order_by(Village.population.desc())
+    )
+    return result.scalars().all()
+
+
+async def autocomplete_by_player(
+    session: AsyncSession,
+    player_id: int,
+    village_name: str,
+    offset: int = 0,
+    limit: int = 100,
+):
+    result = await session.execute(
+        select(Village)
+        .filter(Village.player_id == player_id)
+        .filter(Village.village_name.ilike(f"%{village_name}%"))
+        .offset(offset)
+        .limit(limit)
+        .order_by(Village.population.desc())
+    )
+    return result.scalars().all()
