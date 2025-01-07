@@ -49,7 +49,9 @@ async def get_neighbors(
     population_delta_subquery = (
         select(
             DailyChange.village_id,
-            func.sum(DailyChange.population_delta).label("population_delta"),
+            func.coalesce(func.sum(DailyChange.population_delta), 0).label(
+                "population_delta"
+            ),
         )
         .where(DailyChange.date >= two_days_ago)
         .group_by(DailyChange.village_id)
@@ -61,7 +63,9 @@ async def get_neighbors(
         select(
             Village,
             rounded_distance.label("distance"),
-            population_delta_subquery.c.population_delta,
+            func.coalesce(population_delta_subquery.c.population_delta, 0).label(
+                "population_delta"
+            ),
         )
         .join(
             population_delta_subquery,
