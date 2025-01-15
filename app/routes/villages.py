@@ -16,17 +16,29 @@ async def get_village(village_id: int, session: AsyncSession = Depends(get_sessi
     return await get_by_id(session, village_id)
 
 
-@router.get("/villages/find_my_neighbors/{x}/{y}/{radius}")
+@router.get(
+    "/villages/find_my_neighbors/{x}/{y}/{radius}/{max_population_delta}/{max_village_population}"
+)
 async def find_my_neighbors(
     x: int,
     y: int,
     radius: int = 10,
+    max_population_delta: int = 3,
+    max_village_population: int = 400,
     offset: int = 0,
     limit: int = Query(default=100, lte=100),
     session: AsyncSession = Depends(get_session),
 ):
     neighbors = await get_neighbors(
-        session, x, y, radius, settings.map_size, offset, limit
+        session,
+        x,
+        y,
+        radius,
+        max_population_delta,
+        max_village_population,
+        settings.map_size,
+        offset,
+        limit,
     )
 
     logger.info(f"Found {len(neighbors)} neighbors for village {x}|{y}")

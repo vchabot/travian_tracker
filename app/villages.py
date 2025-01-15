@@ -16,6 +16,8 @@ async def get_neighbors(
     x: int,
     y: int,
     radius: int,
+    max_population_delta: int,
+    max_village_population: int,
     map_size: int,
     offset: int = 0,
     limit: int = 100,
@@ -85,7 +87,12 @@ async def get_neighbors(
             Village.harbor,
             population_delta_subquery.c.population_delta,
         )
-        .having(distance <= radius, distance != 0)
+        .having(
+            distance <= radius,
+            distance != 0,
+            population_delta_subquery.c.population_delta <= max_population_delta,
+            Village.population <= max_village_population,
+        )
         .offset(offset)
         .limit(limit)
         .order_by(rounded_distance)
