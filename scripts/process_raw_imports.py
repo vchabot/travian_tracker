@@ -24,6 +24,7 @@ async def process_raw_imports():
         for raw in raw_data:
             raw.alliance_id = None if raw.alliance_id == 0 else raw.alliance_id
 
+            alliance = None
             # Check and insert alliance
             if raw.alliance_id:
                 alliance = (

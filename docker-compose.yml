@@ -20,7 +20,7 @@ services:
       - db
     environment:
       DATABASE_URL: postgresql+asyncpg://travian_user:travian_password@db:5432/travian_db
-      TRAVIAN_SERVER_URL: https://cw.x5.international.travian.com
+      TRAVIAN_SERVER_URL: https://ts100.x10.europe.travian.com
       RELOAD: 1
     volumes:
       - .:/app
